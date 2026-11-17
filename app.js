@@ -8,29 +8,27 @@ const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches
 /* ---------- content ---------- */
 const categories=[
  {id:'building',ar:'المباني والتشطيبات',en:'Buildings & fit-out',shortAr:'المباني',shortEn:'Buildings',
-  descAr:'تنفيذ المباني التجارية والسكنية وأعمال التشطيبات الداخلية والواجهات، مع ضبط التفاصيل في كل مرحلة من مراحل التنفيذ.',
-  descEn:'Commercial and residential buildings, interior fit-out and facades — with every detail controlled through each stage of construction.',start:1,end:23,cover:8},
+  descAr:'أعمال المباني والتشطيبات الداخلية والواجهات.',
+  descEn:'Building works, interior fit-out and facades.',start:1,end:23,cover:5},
  {id:'cold',ar:'المستودعات والتبريد',en:'Warehousing & refrigeration',shortAr:'التبريد',shortEn:'Refrigeration',
-  descAr:'مستودعات صناعية وغرف تبريد وتجميد، وتجهيزات التخزين المبرّد بما يناسب طبيعة كل منشأة.',
-  descEn:'Industrial warehouses, chillers and freezer rooms, and cold-storage installations fitted to each facility.',start:24,end:42,cover:24},
+  descAr:'المستودعات الصناعية، غرف التبريد والتجميد، وتجهيزات التخزين.',
+  descEn:'Industrial warehouses, cold and freezer rooms, and storage installations.',start:24,end:42,cover:29},
  {id:'mechanical',ar:'الأنظمة الميكانيكية',en:'Mechanical systems',shortAr:'الميكانيكا',shortEn:'Mechanical',
-  descAr:'شبكات التكييف ووحدات مناولة الهواء ومجاري الهواء، وتركيب الأنظمة الميكانيكية وتشغيلها.',
-  descEn:'HVAC networks, air-handling units and ductwork — installed, tested and commissioned.',start:43,end:58,cover:44},
+  descAr:'شبكات التكييف، وحدات مناولة الهواء، ومجاري الهواء.',
+  descEn:'HVAC networks, air-handling units and ductwork.',start:43,end:58,cover:44},
  {id:'fire',ar:'أنظمة مكافحة الحريق',en:'Fire protection systems',shortAr:'مكافحة الحريق',shortEn:'Fire protection',
-  descAr:'مضخات الحريق وشبكات الرش والإطفاء وتجهيزات السلامة وفق متطلبات الدفاع المدني.',
-  descEn:'Fire pumps, sprinkler and suppression networks, and life-safety installations to Civil Defense requirements.',start:59,end:63,cover:61}
+  descAr:'مضخات الحريق وشبكات الرش والإطفاء وتجهيزات الأنظمة.',
+  descEn:'Fire pumps, sprinkler and suppression networks, and system installations.',start:59,end:63,cover:61}
 ];
 const principles=[
- {ar:'الدقة',en:'Precision',descAr:'نقيس مرتين وننفّذ مرة. كل تفصيلة تُراجع على المخططات والمواصفات قبل التنفيذ وبعده.',descEn:'Measure twice, build once. Every detail is checked against drawings and specifications before and after it is built.',
+ {ar:'نطاق الأعمال',en:'Scope of work',descAr:'نوع المنشأة، والأعمال المطلوبة، وحدود التوريد والتركيب.',descEn:'Facility type, required works, and the extent of supply and installation.',
   icon:'<path d="M25 6 43 16 25 26 7 16Z"/><path d="M7 16v18l18 10 18-10V16M25 26v18"/><path d="M25 1v4M25 47v2M2 25h3M45 25h3" />'},
- {ar:'النزاهة',en:'Integrity',descAr:'وضوح في النطاق والتكلفة والجدول الزمني، والتزام بما نتفق عليه من أول يوم حتى التسليم.',descEn:'Clarity on scope, cost and schedule — and we hold to what we agree, from day one to handover.',
+ {ar:'المخططات والمواصفات',en:'Drawings & specifications',descAr:'المخططات وجداول الكميات والمواصفات المتاحة للمشروع.',descEn:'Available drawings, bills of quantities and project specifications.',
   icon:'<path d="M25 4 41 13 25 22 9 13Z"/><path d="M9 13v11l16 9 16-9V13M25 22v11"/><path d="M9 28v9l16 9 16-9v-9M25 37v9"/>'},
- {ar:'المتانة',en:'Endurance',descAr:'نختار المواد والأنظمة لتدوم في مناخ المملكة، ونبني ما يبقى ظاهراً وسليماً لسنوات.',descEn:'Materials and systems chosen to last in the Kingdom’s climate — building what stays sound and visible for years.',
+ {ar:'الموقع والجدول الزمني',en:'Location & schedule',descAr:'مدينة المشروع، وموعد البدء، ومتطلبات التسليم.',descEn:'Project location, intended start date and handover requirements.',
   icon:'<path d="M6 46V30l7-6v22M17 46V22l8-7v31M29 46V10l9-8v44"/><path d="M3 46h44"/><path d="M4 40 C 18 37, 32 30, 47 20"/>'}
 ];
 const ringPhotos=[3,8,24,13,44,20,29,61,5,33,48,17,38,57,10,27,52,1];
-const marqueePhotos=[15,26,45,9,31,59,19,36,50,12,40,62];
-const tickerWords=[['المباني','Buildings'],['التشطيبات','Fit-out'],['المستودعات','Warehouses'],['غرف التبريد','Cold rooms'],['التكييف','HVAC'],['مكافحة الحريق','Fire protection']];
 
 const photos=categories.flatMap(c=>Array.from({length:c.end-c.start+1},(_,i)=>({id:c.start+i,category:c.id,file:photoSrc(c.start+i)})));
 const state={language:'ar',filter:'all',limit:12,openService:0,dialogIndex:0,dialogPhotos:[],lastFocus:null};
@@ -42,7 +40,7 @@ const photoTitle=p=>tr(`صورة ${pad(p.id)}`,`Image ${pad(p.id)}`);
 /* ---------- static builds ---------- */
 function buildRing(){
  const ring=$('#ring');
- ring.innerHTML=ringPhotos.map(n=>`<div class="ring-card"><img src="${photoSrc(n)}" alt="" width="600" height="400" decoding="async"></div>`).join('');
+ ring.innerHTML=ringPhotos.map((n,i)=>`<div class="ring-card"><img src="${photoSrc(n)}" alt="" width="600" height="400" decoding="async" loading="${i<4?'eager':'lazy'}"${i===0?' fetchpriority="high"':''}></div>`).join('');
  layoutRing();
 }
 let ringRadius=1000,ringAngle=0;
@@ -56,15 +54,27 @@ function layoutRing(){
  paintRing();
 }
 function paintRing(){$('#ring').style.transform=`rotateY(${ringAngle}deg)`;}
-let ringRunning=!reduceMotion,last=0,heroVisible=true;
-function spin(t){if(last&&ringRunning&&heroVisible){ringAngle=(ringAngle+(t-last)*0.0045)%360;paintRing();}last=t;requestAnimationFrame(spin);}
-function buildTicker(){
- const group=()=>`<div class="ticker-group">${tickerWords.map((w,i)=>`<span class="ticker-item${i%2?' outline':''}">${state.language==='ar'?w[0]:w[1]}</span><img class="ticker-star" src="${asset('assets/favicon.svg')}" alt="">`).join('')}</div>`;
- $('#ticker-track').innerHTML=group()+group();
+let motionPaused=false,last=0,heroVisible=true,ringFrame=0;
+function canSpin(){return !reduceMotion&&!motionPaused&&heroVisible&&!document.hidden;}
+function syncMotion(){
+ if(canSpin()){if(!ringFrame){last=0;ringFrame=requestAnimationFrame(spin);}}
+ else{cancelAnimationFrame(ringFrame);ringFrame=0;last=0;}
 }
-function buildMarquee(){const set=marqueePhotos.map(n=>`<img src="${photoSrc(n)}" alt="" loading="lazy" width="360" height="240">`).join('');$('#marquee-track').innerHTML=set+set;}
+function spin(t){ringFrame=0;if(!canSpin())return;if(last){ringAngle=(ringAngle+Math.min(t-last,80)*.0028)%360;paintRing();}last=t;ringFrame=requestAnimationFrame(spin);}
+function renderMotion(){
+ $('#motion-toggle').setAttribute('aria-pressed',String(motionPaused));
+ $('#motion-label').textContent=motionPaused?tr('تشغيل الحركة','Play motion'):tr('إيقاف الحركة','Pause motion');
+ $('#motion-icon').textContent=motionPaused?'▷':'Ⅱ';
+}
+function renderFeatured(){
+ $('#featured-grid').innerHTML=categories.map((c,i)=>`<button type="button" class="case-card" data-case="${c.id}" aria-label="${tr('استعرض صور','Explore images of')} ${catName(c)}"><span class="case-image"><img src="${photoSrc(c.cover)}" alt="${catName(c)}" loading="lazy" width="900" height="720"><span class="case-open" aria-hidden="true">↗</span></span><span class="case-caption"><span class="case-number">${pad(i+1)}</span><span class="case-title">${catName(c)}</span></span><span class="case-subtitle">${tr('استعرض صور الأعمال','Explore work images')} <span aria-hidden="true">${tr('←','→')}</span></span></button>`).join('');
+}
+function openArchive(id){
+ $('#archive-panel').open=true;chooseFilter(id);
+ $('#archive-panel').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});
+}
 function renderServices(){
- $('#services-list').innerHTML=categories.map((c,i)=>`<div class="acc-item${state.openService===i?' is-open':''}"><button class="acc-head" type="button" aria-expanded="${state.openService===i}" data-service="${i}"><span class="acc-num">${pad(i+1)}</span><h3 class="acc-title">${catName(c)}</h3><span class="acc-icon" aria-hidden="true"></span></button><div class="acc-body"><div class="acc-inner"><div class="acc-content"><div><p>${tr(c.descAr,c.descEn)}</p><a href="#projects" class="acc-link" data-show="${c.id}">${tr('مشاهدة الصور','View project images')} <span aria-hidden="true">${tr('←','→')}</span></a></div><div class="acc-thumb"><img src="${photoSrc(c.cover)}" alt="" loading="lazy" width="300" height="200"></div></div></div></div></div>`).join('');
+ $('#services-list').innerHTML=categories.map((c,i)=>`<div class="acc-item${state.openService===i?' is-open':''}"><button class="acc-head" type="button" aria-expanded="${state.openService===i}" aria-controls="service-body-${i}" data-service="${i}"><span class="acc-num">${pad(i+1)}</span><span class="acc-title">${catName(c)}</span><span class="acc-icon" aria-hidden="true"></span></button><div class="acc-body" id="service-body-${i}"${state.openService===i?'':' inert'}><div class="acc-inner"><div class="acc-content"><div><p>${tr(c.descAr,c.descEn)}</p><a href="#projects" class="acc-link" data-show="${c.id}">${tr('مشاهدة الصور','View project images')} <span aria-hidden="true">${tr('←','→')}</span></a></div><div class="acc-thumb"><img src="${photoSrc(c.cover)}" alt="" loading="lazy" width="300" height="200"></div></div></div></div></div>`).join('');
 }
 function renderPrinciples(){
  $('#principle-grid').innerHTML=principles.map((p,i)=>`<article class="principle" data-reveal><div class="principle-top"><svg viewBox="0 0 50 50" aria-hidden="true">${p.icon}</svg><span>${pad(i+1)}</span></div><h3>${tr(p.ar,p.en)}</h3><p>${tr(p.descAr,p.descEn)}</p></article>`).join('');
@@ -96,6 +106,7 @@ function translatePage(){
  document.documentElement.lang=state.language;document.documentElement.dir=ar?'rtl':'ltr';
  document.title=tr('أديم العمران — المقاولات الهندسية','Adim Alumran — Engineering Contracting');
  document.querySelectorAll('[data-ar][data-en]').forEach(n=>{n.textContent=n.dataset[state.language];});
+ document.querySelectorAll('[data-alt-ar][data-alt-en]').forEach(n=>{n.alt=n.dataset[ar?'altAr':'altEn'];});
  $('#language-toggle').textContent=ar?'EN':'العربية';$('#language-toggle').setAttribute('aria-label',tr('Switch to English','التحويل إلى العربية'));
  $('#footer-lang').textContent=ar?'English':'العربية';
  $('.brand').setAttribute('aria-label',tr('أديم العمران — الرئيسية','Adim Alumran — Home'));
@@ -104,7 +115,11 @@ function translatePage(){
  $('#filters').setAttribute('aria-label',tr('تصنيف الصور','Filter images'));
  $('#close-dialog').setAttribute('aria-label',tr('إغلاق','Close'));
  $('#to-top').setAttribute('aria-label',tr('إلى الأعلى','Back to top'));
- buildTicker();renderServices();renderPrinciples();renderFilters();renderGrid();
+ $('.scope-index').setAttribute('aria-label',tr('مجالات الأعمال','Areas of work'));
+ $('.scroll-cue').setAttribute('aria-label',tr('تعرّف على الشركة','About the company'));
+ $('#previous-image').setAttribute('aria-label',tr('الصورة السابقة','Previous image'));
+ $('#next-image').setAttribute('aria-label',tr('الصورة التالية','Next image'));
+ renderMotion();renderServices();renderPrinciples();renderFeatured();renderFilters();renderGrid();
  if($('#image-dialog').open)renderDialog();
 }
 function toggleLanguage(){closeMenu();state.language=state.language==='ar'?'en':'ar';try{localStorage.setItem('adim-language',state.language);}catch{}translatePage();}
@@ -117,9 +132,13 @@ $('#menu-toggle').addEventListener('click',()=>{const open=$('#menu-toggle').get
 $('#main-nav').addEventListener('click',e=>{if(e.target.closest('a'))closeMenu();});
 $('#services-list').addEventListener('click',e=>{
  const head=e.target.closest('[data-service]');
- if(head){const i=Number(head.dataset.service);state.openService=state.openService===i?-1:i;document.querySelectorAll('.acc-item').forEach((item,k)=>{item.classList.toggle('is-open',k===state.openService);item.querySelector('.acc-head').setAttribute('aria-expanded',String(k===state.openService));});return;}
- const link=e.target.closest('[data-show]');if(link){chooseFilter(link.dataset.show);}
+ if(head){const i=Number(head.dataset.service);state.openService=state.openService===i?-1:i;document.querySelectorAll('.acc-item').forEach((item,k)=>{item.classList.toggle('is-open',k===state.openService);item.querySelector('.acc-head').setAttribute('aria-expanded',String(k===state.openService));item.querySelector('.acc-body').inert=k!==state.openService;});return;}
+ const link=e.target.closest('[data-show]');if(link){e.preventDefault();openArchive(link.dataset.show);}
 });
+$('#featured-grid').addEventListener('click',e=>{const card=e.target.closest('[data-case]');if(card)openArchive(card.dataset.case);});
+$('.scope-index').addEventListener('click',e=>{const link=e.target.closest('[data-service-jump]');if(link){state.openService=Number(link.dataset.serviceJump);renderServices();}});
+$('#motion-toggle').addEventListener('click',()=>{motionPaused=!motionPaused;document.body.classList.toggle('motion-paused',motionPaused);renderMotion();syncMotion();});
+document.addEventListener('visibilitychange',syncMotion);
 $('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b)chooseFilter(b.dataset.filter);});
 $('#load-more').addEventListener('click',()=>{state.limit+=12;renderGrid();});
 $('#project-grid').addEventListener('click',e=>{const b=e.target.closest('[data-photo]');if(b)openPhoto(Number(b.dataset.photo));});
@@ -150,11 +169,10 @@ function observeReveals(){if(!revealObserver)return;document.querySelectorAll('[
 if('IntersectionObserver' in window&&!reduceMotion){
  document.documentElement.classList.add('motion-ready');
  revealObserver=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('is-visible');revealObserver.unobserve(en.target);}}),{threshold:.12});
- new IntersectionObserver(es=>{heroVisible=es[0].isIntersecting;}).observe($('#home'));
+ new IntersectionObserver(es=>{heroVisible=es[0].isIntersecting;syncMotion();}).observe($('#home'));
 }
 
 /* init */
 try{const saved=localStorage.getItem('adim-language');if(saved==='ar'||saved==='en')state.language=saved;}catch{}
 $('#year').textContent=String(new Date().getFullYear());
-buildRing();buildMarquee();translatePage();observeReveals();onScroll();
-requestAnimationFrame(spin);
+buildRing();translatePage();observeReveals();onScroll();syncMotion();

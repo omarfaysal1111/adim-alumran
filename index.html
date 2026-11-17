@@ -7,8 +7,8 @@
 <title>أديم العمران — المقاولات الهندسية</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/Alexandria.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="stylesheet" href="premium.css">
-<script src="font-loader.js"></script><script src="app.js" defer></script>
+<link rel="stylesheet" href="premium.css?v=refined-20261117">
+<script src="font-loader.js"></script><script src="app.js?v=refined-20261117" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main" data-ar="انتقل إلى المحتوى" data-en="Skip to content">انتقل إلى المحتوى</a>
@@ -20,7 +20,7 @@
     <a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a>
     <a href="#about" data-ar="من نحن" data-en="About us">من نحن</a>
     <a href="#services" data-ar="خدماتنا" data-en="Services">خدماتنا</a>
-    <a href="#projects" data-ar="مشاريعنا" data-en="Our projects">مشاريعنا</a>
+    <a href="#projects" data-ar="الأعمال" data-en="Our work">الأعمال</a>
     <a href="#contact" class="nav-mobile-only" data-ar="تواصل معنا" data-en="Contact us">تواصل معنا</a>
   </nav>
   <div class="header-actions">
@@ -37,91 +37,74 @@
   <div class="hero-stage" aria-hidden="true"><div class="ring" id="ring"></div></div>
   <div class="hero-shade" aria-hidden="true"></div>
   <div class="hero-content">
-    <p class="hero-welcome" data-ar="مرحباً بكم في" data-en="Welcome to">مرحباً بكم في</p>
+    <p class="hero-welcome" data-ar="المقاولات الهندسية" data-en="Engineering contracting">المقاولات الهندسية</p>
     <h1 class="hero-title" data-ar="أديم العمران" data-en="Adim Alumran">أديم العمران</h1>
     <p class="hero-tagline" data-ar="دقة في الهندسة، متانة تدوم" data-en="Engineered with precision, built to last">دقة في الهندسة، متانة تدوم</p>
-    <span class="dash" aria-hidden="true"></span>
+    <div class="hero-actions"><a class="hero-work-link" href="#projects"><span data-ar="استعرض الأعمال" data-en="Explore our work">استعرض الأعمال</span><span aria-hidden="true">↙</span></a></div>
   </div>
-  <a href="#intro" class="scroll-cue" aria-label="Scroll"><span></span></a>
+  <div class="hero-bottom-line"><span data-ar="جدة · المملكة العربية السعودية" data-en="Jeddah · Saudi Arabia">جدة · المملكة العربية السعودية</span><button id="motion-toggle" class="motion-toggle" type="button" aria-pressed="false"><span id="motion-icon" aria-hidden="true">Ⅱ</span><span id="motion-label">إيقاف الحركة</span></button></div>
+  <a href="#about" class="scroll-cue" aria-label="Scroll"><span></span></a>
 </section>
 
-<!-- INTRO: WE [img] ARE / ADIM [img] / ALUMRAN -->
-<section id="intro" class="intro">
-  <div class="intro-row row-1" data-reveal>
-    <span class="giant" data-ar="نحن" data-en="We">نحن</span>
-    <figure class="intro-img wide"><img src="assets/project-photo-03.jpg" alt="" loading="lazy" width="600" height="400"></figure>
-    <span class="giant" data-ar="شركة" data-en="Are">شركة</span>
+<!-- COMPANY INTRODUCTION -->
+<section id="about" class="company-intro container">
+  <div class="company-copy" data-reveal>
+    <p class="eyebrow"><span class="label-dot"></span><span data-ar="شركة أديم العمران" data-en="ADIM ALUMRAN">شركة أديم العمران</span></p>
+    <h2 class="company-title"><span data-ar="مقاولات هندسية" data-en="Engineering contracting.">مقاولات هندسية</span><span class="soft" data-ar="للمباني والأنظمة." data-en="Buildings and systems.">للمباني والأنظمة.</span></h2>
+    <p class="company-description" data-ar="شركة مقاولات هندسية في جدة، تشمل مجالات أعمالها المباني والتشطيبات، المستودعات وغرف التبريد، والأنظمة الميكانيكية ومكافحة الحريق." data-en="An engineering contracting company based in Jeddah, working across buildings and fit-out, warehouses and cold rooms, mechanical systems and fire protection.">شركة مقاولات هندسية في جدة، تشمل مجالات أعمالها المباني والتشطيبات، المستودعات وغرف التبريد، والأنظمة الميكانيكية ومكافحة الحريق.</p>
+    <a href="#services" class="text-link"><span data-ar="تعرّف على خدماتنا" data-en="Explore our services">تعرّف على خدماتنا</span><span aria-hidden="true">↗</span></a>
   </div>
-  <div class="intro-row row-2" data-reveal>
-    <span class="giant" data-ar="أديم" data-en="Adim">أديم</span>
-    <figure class="intro-img tall"><img src="assets/project-photo-44.jpg" alt="" loading="lazy" width="600" height="800"></figure>
-    <p class="intro-copy" data-ar="أديم العمران شركة مقاولات هندسية في جدة. ننفّذ المباني والتشطيبات، والمستودعات وغرف التبريد، والأنظمة الميكانيكية وأنظمة مكافحة الحريق — بدقة في التنفيذ ومتانة تدوم." data-en="Adim Alumran is an engineering contracting company based in Jeddah. We deliver buildings and fit-out, warehouses and cold rooms, mechanical and fire-protection systems — built with precision, made to last.">أديم العمران شركة مقاولات هندسية في جدة. ننفّذ المباني والتشطيبات، والمستودعات وغرف التبريد، والأنظمة الميكانيكية وأنظمة مكافحة الحريق — بدقة في التنفيذ ومتانة تدوم.</p>
-  </div>
-  <div class="intro-row row-3" data-reveal>
-    <span class="giant" data-ar="العمران" data-en="Alumran">العمران</span>
+  <figure class="company-visual" data-reveal><img src="assets/project-photo-05.jpg" alt="واجهة مبنى أثناء أعمال التنفيذ" data-alt-ar="واجهة مبنى أثناء أعمال التنفيذ" data-alt-en="Building facade during construction" loading="lazy" width="1400" height="1000"><figcaption><span data-ar="المباني والتشطيبات" data-en="BUILDINGS & FIT-OUT">المباني والتشطيبات</span><span aria-hidden="true">↗</span></figcaption><span class="image-edge" aria-hidden="true"></span></figure>
+  <div class="scope-index" aria-label="مجالات الأعمال">
+    <a href="#services" data-service-jump="0"><span>01</span><span data-ar="المباني والتشطيبات" data-en="Buildings & fit-out">المباني والتشطيبات</span><span aria-hidden="true">↗</span></a>
+    <a href="#services" data-service-jump="1"><span>02</span><span data-ar="المستودعات والتبريد" data-en="Warehousing & refrigeration">المستودعات والتبريد</span><span aria-hidden="true">↗</span></a>
+    <a href="#services" data-service-jump="2"><span>03</span><span data-ar="الأنظمة الميكانيكية" data-en="Mechanical systems">الأنظمة الميكانيكية</span><span aria-hidden="true">↗</span></a>
+    <a href="#services" data-service-jump="3"><span>04</span><span data-ar="مكافحة الحريق" data-en="Fire protection">مكافحة الحريق</span><span aria-hidden="true">↗</span></a>
   </div>
 </section>
 
-<!-- TICKER -->
-<div class="ticker" aria-hidden="true">
-  <div class="ticker-track" id="ticker-track"></div>
-</div>
-
-<!-- ABOUT -->
-<section id="about" class="about container">
-  <div class="split">
-    <p class="side-label" data-ar="الشركة." data-en="Company.">الشركة.</p>
-    <div class="split-main" data-reveal>
-      <h2 class="statement">
-        <span class="muted-line" data-ar="أديم الشيء ظاهره،" data-en="Adim is the visible face of a thing —">أديم الشيء ظاهره،</span>
-        <span data-ar="وأديم العمران هو ما يبقى ظاهراً من البناء: الواجهة والتفاصيل والأنظمة التي تعمل بصمت." data-en="Adim Alumran is what remains visible of construction: the facade, the detail, and the systems that quietly keep it running.">وأديم العمران هو ما يبقى ظاهراً من البناء: الواجهة والتفاصيل والأنظمة التي تعمل بصمت.</span>
-      </h2>
-      <p class="body-copy" data-ar="نجمع بين الأعمال المدنية والتجهيزات والأنظمة الهندسية تحت إدارة واحدة، من دراسة النطاق والمخططات إلى التسليم. نعمل في جدة ومدن المملكة على المنشآت التجارية والصناعية والسكنية." data-en="We bring civil works, installations and engineering systems under one management — from scope and drawings through to handover. We work in Jeddah and across the Kingdom on commercial, industrial and residential facilities.">نجمع بين الأعمال المدنية والتجهيزات والأنظمة الهندسية تحت إدارة واحدة، من دراسة النطاق والمخططات إلى التسليم. نعمل في جدة ومدن المملكة على المنشآت التجارية والصناعية والسكنية.</p>
-    </div>
-  </div>
-  <hr class="rule">
-  <!-- SERVICES -->
-  <div id="services" class="split services">
-    <p class="side-label" data-ar="خدماتنا." data-en="Our services.">خدماتنا.</p>
+<!-- SERVICES -->
+<section id="services" class="services-section container">
+  <div class="split services">
+    <div class="services-aside"><p class="eyebrow" data-ar="مجالات العمل" data-en="WHAT WE DO">مجالات العمل</p><h2 class="services-title" data-ar="خدماتنا" data-en="Our services">خدماتنا</h2><p data-ar="أعمال المباني والتشطيبات والأنظمة الفنية للمنشآت." data-en="Building, fit-out and technical systems for your facility.">أعمال المباني والتشطيبات والأنظمة الفنية للمنشآت.</p></div>
     <div class="split-main accordion" id="services-list"></div>
   </div>
-</section>
-
-<!-- PRINCIPLES -->
-<section class="principles container">
-  <div class="section-head">
-    <h2 class="section-title" data-ar="مبادئنا" data-en="Our principles">مبادئنا</h2>
-    <a href="#contact" class="pill-arrow"><span class="pill-button" data-ar="اعمل معنا" data-en="Work with us">اعمل معنا</span><span class="arrow-dot" aria-hidden="true">↗</span></a>
-  </div>
-  <div class="principle-grid" id="principle-grid"></div>
 </section>
 
 <!-- PROJECTS -->
 <section id="projects" class="projects">
   <div class="container">
     <div class="section-head">
-      <h2 class="section-title" data-ar="مشاريعنا" data-en="Our projects">مشاريعنا</h2>
-      <div class="filters" id="filters" role="group" aria-label="تصنيف الصور"></div>
+      <h2 class="section-title" data-ar="نماذج من الأعمال" data-en="Selected work">نماذج من الأعمال</h2>
     </div>
-    <div class="project-grid" id="project-grid"></div>
-    <div class="projects-foot">
-      <span id="result-status" class="result-status" role="status" aria-live="polite"></span>
-      <button id="load-more" class="pill-button dark" type="button" data-ar="عرض المزيد" data-en="Load more">عرض المزيد</button>
-    </div>
+    <p class="projects-lead" data-ar="استعرض أعمالنا في أربعة مجالات للمقاولات." data-en="Explore our work across four areas of contracting.">استعرض أعمالنا في أربعة مجالات للمقاولات.</p>
+    <div class="featured-grid" id="featured-grid"></div>
+    <details class="archive-panel" id="archive-panel"><summary><span><span class="archive-heading" data-ar="معرض الصور الكامل" data-en="Full image gallery">معرض الصور الكامل</span><span class="archive-count" data-ar="63 صورة · استعرض حسب نوع الأعمال" data-en="63 images · explore by work category">63 صورة · استعرض حسب نوع الأعمال</span></span><span class="archive-plus" aria-hidden="true">+</span></summary>
+      <div class="archive-content"><div class="filters" id="filters" role="group" aria-label="تصنيف الصور"></div><div class="project-grid" id="project-grid"></div><div class="projects-foot"><span id="result-status" class="result-status" role="status" aria-live="polite"></span><button id="load-more" class="pill-button dark" type="button" data-ar="عرض المزيد من الصور" data-en="Load more images">عرض المزيد من الصور</button></div></div>
+    </details>
   </div>
-  <div class="project-marquee" aria-hidden="true"><div class="marquee-track" id="marquee-track"></div></div>
+</section>
+
+<!-- PROJECT ENQUIRY -->
+<section class="principles project-brief container">
+  <div class="section-head">
+    <h2 class="section-title" data-ar="لنناقش مشروعك بوضوح" data-en="A clear starting point">لنناقش مشروعك بوضوح</h2>
+    <a href="#contact" class="pill-arrow"><span class="pill-button" data-ar="أرسل تفاصيل المشروع" data-en="Send your project brief">أرسل تفاصيل المشروع</span><span class="arrow-dot" aria-hidden="true">↗</span></a>
+  </div>
+  <div class="principle-grid" id="principle-grid"></div>
 </section>
 
 <!-- CTA -->
 <section id="contact" class="cta">
   <svg class="road" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true"><path d="M-20 300 C 420 290, 900 220, 1460 30" fill="none" stroke="url(#roadGrad)" stroke-width="2"/><path d="M-20 318 C 440 306, 930 236, 1460 60" fill="none" stroke="#1f5592" stroke-width="1.2" opacity=".7"/><defs><linearGradient id="roadGrad" x1="0" x2="1"><stop offset="0" stop-color="#c8c7c3" stop-opacity="0"/><stop offset=".5" stop-color="#c8c7c3" stop-opacity=".55"/><stop offset="1" stop-color="#c8c7c3"/></linearGradient></defs></svg>
-  <span class="pill-button static" data-ar="اعمل معنا" data-en="Work with us">اعمل معنا</span>
+  <span class="pill-button static" data-ar="تواصل معنا" data-en="CONTACT">تواصل معنا</span>
   <h2 class="cta-title" data-reveal>
-    <span data-ar="يسعدنا" data-en="We would love">يسعدنا</span>
-    <span data-ar="أن نسمع أكثر" data-en="to hear more about">أن نسمع أكثر</span>
-    <span data-ar="عن مشروعك" data-en="your project">عن مشروعك</span>
+    <span data-ar="لنتحدث عن" data-en="Let’s talk about">لنتحدث عن</span>
+    <span data-ar="مشروعك." data-en="your project.">مشروعك.</span>
   </h2>
-  <a class="circle-button" href="mailto:info@adim-alumran.com?subject=Project%20enquiry" data-ar="تواصل معنا" data-en="Get in touch">تواصل معنا</a>
+  <p class="cta-description" data-ar="أرسل نطاق الأعمال وموقع المشروع والمخططات المتاحة." data-en="Share the scope, project location and any available drawings.">أرسل نطاق الأعمال وموقع المشروع والمخططات المتاحة.</p>
+  <a class="cta-email" href="mailto:info@adim-alumran.com">info@adim-alumran.com <span aria-hidden="true">↗</span></a>
+  <a class="contact-send" href="mailto:info@adim-alumran.com?subject=Project%20enquiry"><span data-ar="أرسل تفاصيل المشروع" data-en="Send project details">أرسل تفاصيل المشروع</span><span aria-hidden="true">↗</span></a>
 </section>
 </main>
 
@@ -133,7 +116,7 @@
       <div class="footer-links">
         <a href="#about" data-ar="من نحن" data-en="About">من نحن</a>
         <a href="#services" data-ar="خدماتنا" data-en="Services">خدماتنا</a>
-        <a href="#projects" data-ar="مشاريعنا" data-en="Projects">مشاريعنا</a>
+        <a href="#projects" data-ar="الأعمال" data-en="Work">الأعمال</a>
         <a href="#contact" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</a>
       </div>
     </div>
@@ -141,6 +124,7 @@
       <p class="footer-label">ADIM ALUMRAN</p>
       <p class="footer-tag" data-ar="دقة في الهندسة، متانة تدوم." data-en="Engineered with precision, built to last.">دقة في الهندسة، متانة تدوم.</p>
       <a class="footer-email" href="mailto:info@adim-alumran.com">info@adim-alumran.com</a>
+      <span class="footer-domain" lang="en">adim-alumran.com</span>
       <p class="footer-place" data-ar="جدة · المملكة العربية السعودية" data-en="Jeddah · Saudi Arabia">جدة · المملكة العربية السعودية</p>
     </div>
   </div>
