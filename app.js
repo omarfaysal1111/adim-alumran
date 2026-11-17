@@ -48,7 +48,7 @@ function buildRing(){
 let ringRadius=1000,ringAngle=0;
 function layoutRing(){
  const cards=[...document.querySelectorAll('.ring-card')];const n=cards.length;
- const vw=innerWidth;const w=Math.max(220,Math.min(520,vw*.29));const h=w*.7;const gap=w*.07;
+ const vw=innerWidth;const w=vw<700?vw*.9:Math.min(640,vw*.36);const h=w*.78;const gap=w*.07;
  ringRadius=n*(w+gap)/(2*Math.PI);
  const stage=$('.hero-stage');stage.style.setProperty('--persp',`${Math.round(ringRadius*1.03)}px`);
  cards.forEach((card,i)=>{card.style.setProperty('--w',`${w}px`);card.style.setProperty('--h',`${h}px`);card.dataset.angle=String(i*360/n);
