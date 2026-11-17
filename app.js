@@ -1,67 +1,160 @@
 'use strict';
 const asset=path=>window.ADIM_ASSETS?.[path]||path;
+const pad=n=>String(n).padStart(2,'0');
+const photoSrc=n=>asset(`assets/project-photo-${pad(n)}.jpg`);
+const $=s=>document.querySelector(s);
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- content ---------- */
 const categories=[
- {id:'building',ar:'المباني والتشطيبات',en:'Buildings & fit-out',shortAr:'المباني',shortEn:'Buildings',descriptionAr:'واجهات، أعمال داخلية، وتفاصيل مراحل التنفيذ.',descriptionEn:'Facades, interiors and details from the construction process.',start:1,end:23,cover:8,tag:'BUILDINGS & INTERIORS'},
- {id:'cold',ar:'المستودعات والتبريد',en:'Warehousing & refrigeration',shortAr:'التبريد',shortEn:'Refrigeration',descriptionAr:'فراغات صناعية، غرف تبريد، وتجهيزات المستودعات.',descriptionEn:'Industrial spaces, cold rooms and warehouse installations.',start:24,end:42,cover:24,tag:'WAREHOUSING & COLD ROOMS'},
- {id:'mechanical',ar:'الأنظمة الميكانيكية',en:'Mechanical systems',shortAr:'الأنظمة الميكانيكية',shortEn:'Mechanical',descriptionAr:'شبكات تكييف، وحدات مناولة هواء، وتفاصيل الأنظمة.',descriptionEn:'HVAC networks, air handling units and system details.',start:43,end:58,cover:44,tag:'MECHANICAL & HVAC'},
- {id:'fire',ar:'أنظمة مكافحة الحريق',en:'Fire protection systems',shortAr:'مكافحة الحريق',shortEn:'Fire protection',descriptionAr:'مضخات، شبكات، وتجهيزات أنظمة مكافحة الحريق.',descriptionEn:'Pumps, networks and fire protection installations.',start:59,end:63,cover:61,tag:'FIRE PROTECTION'}
+ {id:'building',ar:'المباني والتشطيبات',en:'Buildings & fit-out',shortAr:'المباني',shortEn:'Buildings',
+  descAr:'تنفيذ المباني التجارية والسكنية وأعمال التشطيبات الداخلية والواجهات، مع ضبط التفاصيل في كل مرحلة من مراحل التنفيذ.',
+  descEn:'Commercial and residential buildings, interior fit-out and facades — with every detail controlled through each stage of construction.',start:1,end:23,cover:8},
+ {id:'cold',ar:'المستودعات والتبريد',en:'Warehousing & refrigeration',shortAr:'التبريد',shortEn:'Refrigeration',
+  descAr:'مستودعات صناعية وغرف تبريد وتجميد، وتجهيزات التخزين المبرّد بما يناسب طبيعة كل منشأة.',
+  descEn:'Industrial warehouses, chillers and freezer rooms, and cold-storage installations fitted to each facility.',start:24,end:42,cover:24},
+ {id:'mechanical',ar:'الأنظمة الميكانيكية',en:'Mechanical systems',shortAr:'الميكانيكا',shortEn:'Mechanical',
+  descAr:'شبكات التكييف ووحدات مناولة الهواء ومجاري الهواء، وتركيب الأنظمة الميكانيكية وتشغيلها.',
+  descEn:'HVAC networks, air-handling units and ductwork — installed, tested and commissioned.',start:43,end:58,cover:44},
+ {id:'fire',ar:'أنظمة مكافحة الحريق',en:'Fire protection systems',shortAr:'مكافحة الحريق',shortEn:'Fire protection',
+  descAr:'مضخات الحريق وشبكات الرش والإطفاء وتجهيزات السلامة وفق متطلبات الدفاع المدني.',
+  descEn:'Fire pumps, sprinkler and suppression networks, and life-safety installations to Civil Defense requirements.',start:59,end:63,cover:61}
 ];
-const photos=categories.flatMap(category=>Array.from({length:category.end-category.start+1},(_,index)=>({id:category.start+index,category:category.id,file:asset(`assets/project-photo-${String(category.start+index).padStart(2,'0')}.jpg`)})));
-const state={language:'ar',filter:'all',search:'',limit:12,dialogIndex:0,dialogPhotos:[],lastFocus:null};
-const $=selector=>document.querySelector(selector);
-const categoryFor=photo=>categories.find(category=>category.id===photo.category);
+const principles=[
+ {ar:'الدقة',en:'Precision',descAr:'نقيس مرتين وننفّذ مرة. كل تفصيلة تُراجع على المخططات والمواصفات قبل التنفيذ وبعده.',descEn:'Measure twice, build once. Every detail is checked against drawings and specifications before and after it is built.',
+  icon:'<path d="M25 6 43 16 25 26 7 16Z"/><path d="M7 16v18l18 10 18-10V16M25 26v18"/><path d="M25 1v4M25 47v2M2 25h3M45 25h3" />'},
+ {ar:'النزاهة',en:'Integrity',descAr:'وضوح في النطاق والتكلفة والجدول الزمني، والتزام بما نتفق عليه من أول يوم حتى التسليم.',descEn:'Clarity on scope, cost and schedule — and we hold to what we agree, from day one to handover.',
+  icon:'<path d="M25 4 41 13 25 22 9 13Z"/><path d="M9 13v11l16 9 16-9V13M25 22v11"/><path d="M9 28v9l16 9 16-9v-9M25 37v9"/>'},
+ {ar:'المتانة',en:'Endurance',descAr:'نختار المواد والأنظمة لتدوم في مناخ المملكة، ونبني ما يبقى ظاهراً وسليماً لسنوات.',descEn:'Materials and systems chosen to last in the Kingdom’s climate — building what stays sound and visible for years.',
+  icon:'<path d="M6 46V30l7-6v22M17 46V22l8-7v31M29 46V10l9-8v44"/><path d="M3 46h44"/><path d="M4 40 C 18 37, 32 30, 47 20"/>'}
+];
+const ringPhotos=[3,8,24,13,44,20,29,61,5,33,48,17,38,57,10,27,52,1];
+const marqueePhotos=[15,26,45,9,31,59,19,36,50,12,40,62];
+const tickerWords=[['المباني','Buildings'],['التشطيبات','Fit-out'],['المستودعات','Warehouses'],['غرف التبريد','Cold rooms'],['التكييف','HVAC'],['مكافحة الحريق','Fire protection']];
+
+const photos=categories.flatMap(c=>Array.from({length:c.end-c.start+1},(_,i)=>({id:c.start+i,category:c.id,file:photoSrc(c.start+i)})));
+const state={language:'ar',filter:'all',limit:12,openService:0,dialogIndex:0,dialogPhotos:[],lastFocus:null};
 const tr=(ar,en)=>state.language==='ar'?ar:en;
-const photoTitle=photo=>tr(`صورة مرجعية ${String(photo.id).padStart(2,'0')}`,`Archive image ${String(photo.id).padStart(2,'0')}`);
-function filteredPhotos(){const query=state.search.trim().toLocaleLowerCase().replace(/[٠-٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));return photos.filter(photo=>{const category=categoryFor(photo);return(state.filter==='all'||photo.category===state.filter)&&(!query||[photo.id,String(photo.id).padStart(2,'0'),category.ar,category.en,category.shortAr,category.shortEn,category.descriptionAr,category.descriptionEn,category.tag,photoTitle(photo)].join(' ').toLocaleLowerCase().includes(query));});}
-function translatePage(){document.documentElement.lang=state.language;document.documentElement.dir=state.language==='ar'?'rtl':'ltr';document.title=tr('أديم العمران — المقاولات الهندسية','Adim Alumran — Engineering Contracting');document.querySelectorAll('[data-ar][data-en]').forEach(node=>{node.textContent=node.dataset[state.language];});document.querySelectorAll('[data-placeholder-ar]').forEach(node=>{node.placeholder=state.language==='ar'?node.dataset.placeholderAr:node.dataset.placeholderEn;});$('#language-toggle').innerHTML=state.language==='ar'?'EN <span>↗</span>':'العربية <span>↗</span>';$('#language-toggle').setAttribute('aria-label',tr('Switch to English','التحويل إلى العربية'));$('.brand').setAttribute('aria-label',tr('أديم العمران — الرئيسية','Adim Alumran — Home'));$('#main-nav').setAttribute('aria-label',tr('القائمة الرئيسية','Main navigation'));$('#menu-toggle').setAttribute('aria-label',tr('فتح القائمة','Open menu'));$('#archive-search').setAttribute('aria-label',tr('البحث في الأرشيف','Search the image archive'));$('#filters').setAttribute('aria-label',tr('تصنيف الصور','Filter images'));$('#close-dialog').setAttribute('aria-label',tr('إغلاق','Close'));$('#previous-image').setAttribute('aria-label',tr('الصورة السابقة','Previous image'));$('#next-image').setAttribute('aria-label',tr('الصورة التالية','Next image'));document.querySelectorAll('[data-lang-src-ar]').forEach(image=>{image.src=asset(state.language==='ar'?image.dataset.langSrcAr:image.dataset.langSrcEn);});$('#collections').setAttribute('aria-label',tr('مجموعات صور الأعمال','Work image collections'));renderCollections();renderFilters();renderArchive();updateMotionLabel();if($('#image-dialog').open)renderDialog();}
-function renderCollections(){
- $('#collections').innerHTML=categories.map((category,index)=>`<button class="collection-card" type="button" data-collection="${category.id}"><span class="collection-image"><img src="${asset(`assets/project-photo-${String(category.cover).padStart(2,'0')}.jpg`)}" alt="${state.language==='ar'?category.ar:category.en}" loading="lazy" width="900" height="900"><span class="collection-image-number">0${index+1} / 04</span><span class="collection-open" aria-hidden="true">↗</span></span><span class="collection-meta"><span class="collection-meta-top"><strong class="collection-title">${state.language==='ar'?category.ar:category.en}</strong><span class="collection-count">${tr(`${category.end-category.start+1} صورة`,`${category.end-category.start+1} images`)}</span></span><span class="collection-description">${state.language==='ar'?category.descriptionAr:category.descriptionEn}</span><span class="collection-tag" lang="en">${category.tag}</span></span></button>`).join('');
+const catFor=p=>categories.find(c=>c.id===p.category);
+const catName=c=>tr(c.ar,c.en);
+const photoTitle=p=>tr(`صورة ${pad(p.id)}`,`Image ${pad(p.id)}`);
+
+/* ---------- static builds ---------- */
+function buildRing(){
+ const ring=$('#ring');
+ ring.innerHTML=ringPhotos.map(n=>`<div class="ring-card"><img src="${photoSrc(n)}" alt="" width="600" height="400" decoding="async"></div>`).join('');
+ layoutRing();
 }
-function renderFilters(){const all=[{id:'all',ar:'جميع الصور',en:'All images',count:photos.length},...categories.map(category=>({id:category.id,ar:category.shortAr,en:category.shortEn,count:category.end-category.start+1}))];$('#filters').innerHTML=all.map(category=>`<button type="button" class="filter-button" data-filter="${category.id}" aria-pressed="${category.id===state.filter}">${state.language==='ar'?category.ar:category.en}<sup>${category.count}</sup></button>`).join('');}
-function renderArchive(){const found=filteredPhotos();const visible=found.slice(0,state.limit);$('#archive-grid').innerHTML=visible.map(photo=>{const category=categoryFor(photo);return `<button class="archive-item" type="button" data-photo="${photo.id}" aria-label="${tr('فتح','Open')} ${photoTitle(photo)} — ${state.language==='ar'?category.ar:category.en}"><div class="archive-item-image"><img src="${photo.file}" alt="${state.language==='ar'?category.ar:category.en} — ${photoTitle(photo)}" loading="lazy" width="400" height="330"></div><div class="archive-item-caption"><span>${state.language==='ar'?category.ar:category.en}</span><small>${String(photo.id).padStart(2,'0')}</small></div></button>`;}).join('');$('#result-status').textContent=tr(`عرض ${visible.length} من ${found.length} صورة`,`Showing ${visible.length} of ${found.length} images`);$('#load-more').hidden=visible.length>=found.length;$('#empty-state').hidden=found.length>0;}
-function chooseFilter(id,scroll=false){state.filter=id;state.search='';state.limit=12;$('#archive-search').value='';renderFilters();renderArchive();if(scroll){$('#archive').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}}
-function openPhoto(id){state.lastFocus=document.activeElement;state.dialogPhotos=filteredPhotos();state.dialogIndex=state.dialogPhotos.findIndex(photo=>photo.id===id);if(state.dialogIndex<0)return;renderDialog();$('#image-dialog').showModal();document.body.classList.add('modal-open');$('#close-dialog').focus();}
-function renderDialog(){const photo=state.dialogPhotos[state.dialogIndex];if(!photo)return;const category=categoryFor(photo);$('#dialog-category').textContent=state.language==='ar'?category.ar:category.en;$('#dialog-title').textContent=photoTitle(photo);$('#dialog-image').src=photo.file;$('#dialog-image').alt=`${state.language==='ar'?category.ar:category.en} — ${photoTitle(photo)}`;$('#original-image').href=photo.file;if(window.ADIM_ASSETS){$('#original-image').download=`Adim-Archive-${String(photo.id).padStart(2,'0')}.jpg`;$('#original-image').textContent=tr('تنزيل الصورة الأصلية ↗','Download original image ↗');}$('#dialog-counter').textContent=`${state.dialogIndex+1} / ${state.dialogPhotos.length}`;$('#dialog-thumbnails').innerHTML=state.dialogPhotos.map((item,index)=>`<button type="button" data-dialog-index="${index}" aria-current="${index===state.dialogIndex}" aria-label="${photoTitle(item)}"><img src="${item.file}" alt="" loading="lazy" width="64" height="48"></button>`).join('');$('#dialog-thumbnails [aria-current="true"]')?.scrollIntoView({block:'nearest',inline:'nearest'});}
-function navigatePhoto(delta){state.dialogIndex=(state.dialogIndex+delta+state.dialogPhotos.length)%state.dialogPhotos.length;renderDialog();}
-function closeMenu(){const open=$('#menu-toggle').getAttribute('aria-expanded')==='true';if(open){$('#main-nav').classList.remove('is-open');$('#menu-toggle').setAttribute('aria-expanded','false');}}
-$('#language-toggle').addEventListener('click',()=>{closeMenu();state.language=state.language==='ar'?'en':'ar';try{localStorage.setItem('adim-language',state.language);}catch{}translatePage();});
+let ringRadius=1000,ringAngle=0;
+function layoutRing(){
+ const cards=[...document.querySelectorAll('.ring-card')];const n=cards.length;
+ const vw=innerWidth;const w=Math.max(220,Math.min(520,vw*.29));const h=w*.7;const gap=w*.07;
+ ringRadius=n*(w+gap)/(2*Math.PI);
+ const stage=$('.hero-stage');stage.style.setProperty('--persp',`${Math.round(ringRadius*1.03)}px`);
+ cards.forEach((card,i)=>{card.style.setProperty('--w',`${w}px`);card.style.setProperty('--h',`${h}px`);card.dataset.angle=String(i*360/n);
+  card.style.transform=`rotateY(${i*360/n}deg) translateZ(${-ringRadius}px)`;});
+ paintRing();
+}
+function paintRing(){$('#ring').style.transform=`rotateY(${ringAngle}deg)`;}
+let ringRunning=!reduceMotion,last=0,heroVisible=true;
+function spin(t){if(last&&ringRunning&&heroVisible){ringAngle=(ringAngle+(t-last)*0.0045)%360;paintRing();}last=t;requestAnimationFrame(spin);}
+function buildTicker(){
+ const group=()=>`<div class="ticker-group">${tickerWords.map((w,i)=>`<span class="ticker-item${i%2?' outline':''}">${state.language==='ar'?w[0]:w[1]}</span><img class="ticker-star" src="${asset('assets/favicon.svg')}" alt="">`).join('')}</div>`;
+ $('#ticker-track').innerHTML=group()+group();
+}
+function buildMarquee(){const set=marqueePhotos.map(n=>`<img src="${photoSrc(n)}" alt="" loading="lazy" width="360" height="240">`).join('');$('#marquee-track').innerHTML=set+set;}
+function renderServices(){
+ $('#services-list').innerHTML=categories.map((c,i)=>`<div class="acc-item${state.openService===i?' is-open':''}"><button class="acc-head" type="button" aria-expanded="${state.openService===i}" data-service="${i}"><span class="acc-num">${pad(i+1)}</span><h3 class="acc-title">${catName(c)}</h3><span class="acc-icon" aria-hidden="true"></span></button><div class="acc-body"><div class="acc-inner"><div class="acc-content"><div><p>${tr(c.descAr,c.descEn)}</p><a href="#projects" class="acc-link" data-show="${c.id}">${tr('مشاهدة الصور','View project images')} <span aria-hidden="true">${tr('←','→')}</span></a></div><div class="acc-thumb"><img src="${photoSrc(c.cover)}" alt="" loading="lazy" width="300" height="200"></div></div></div></div></div>`).join('');
+}
+function renderPrinciples(){
+ $('#principle-grid').innerHTML=principles.map((p,i)=>`<article class="principle" data-reveal><div class="principle-top"><svg viewBox="0 0 50 50" aria-hidden="true">${p.icon}</svg><span>${pad(i+1)}</span></div><h3>${tr(p.ar,p.en)}</h3><p>${tr(p.descAr,p.descEn)}</p></article>`).join('');
+ observeReveals();
+}
+
+/* ---------- gallery ---------- */
+const filtered=()=>photos.filter(p=>state.filter==='all'||p.category===state.filter);
+function renderFilters(){
+ const all=[{id:'all',ar:'الكل',en:'All',count:photos.length},...categories.map(c=>({id:c.id,ar:c.shortAr,en:c.shortEn,count:c.end-c.start+1}))];
+ $('#filters').innerHTML=all.map(f=>`<button type="button" class="filter-button" data-filter="${f.id}" aria-pressed="${f.id===state.filter}">${tr(f.ar,f.en)}<sup>${f.count}</sup></button>`).join('');
+}
+function renderGrid(){
+ const found=filtered();const shown=found.slice(0,state.limit);
+ $('#project-grid').innerHTML=shown.map(p=>{const c=catFor(p);return `<button class="project-card" type="button" data-photo="${p.id}" aria-label="${tr('فتح','Open')} ${photoTitle(p)} — ${catName(c)}"><img src="${p.file}" alt="${catName(c)} — ${photoTitle(p)}" loading="lazy" width="400" height="330"><span class="cap"><span>${catName(c)}</span><small>${pad(p.id)}</small></span></button>`;}).join('');
+ $('#result-status').textContent=tr(`عرض ${shown.length} من ${found.length} صورة`,`Showing ${shown.length} of ${found.length} images`);
+ $('#load-more').hidden=shown.length>=found.length;
+}
+function chooseFilter(id){state.filter=id;state.limit=12;renderFilters();renderGrid();}
+
+/* ---------- lightbox ---------- */
+function openPhoto(id){state.lastFocus=document.activeElement;state.dialogPhotos=filtered();state.dialogIndex=state.dialogPhotos.findIndex(p=>p.id===id);if(state.dialogIndex<0)return;renderDialog();$('#image-dialog').showModal();document.body.classList.add('modal-open');}
+function renderDialog(){const p=state.dialogPhotos[state.dialogIndex];if(!p)return;const c=catFor(p);$('#dialog-category').textContent=catName(c);$('#dialog-title').textContent=photoTitle(p);$('#dialog-image').src=p.file;$('#dialog-image').alt=`${catName(c)} — ${photoTitle(p)}`;$('#dialog-counter').textContent=`${state.dialogIndex+1} / ${state.dialogPhotos.length}`;}
+function stepPhoto(d){state.dialogIndex=(state.dialogIndex+d+state.dialogPhotos.length)%state.dialogPhotos.length;renderDialog();}
+
+/* ---------- language ---------- */
+function translatePage(){
+ const ar=state.language==='ar';
+ document.documentElement.lang=state.language;document.documentElement.dir=ar?'rtl':'ltr';
+ document.title=tr('أديم العمران — المقاولات الهندسية','Adim Alumran — Engineering Contracting');
+ document.querySelectorAll('[data-ar][data-en]').forEach(n=>{n.textContent=n.dataset[state.language];});
+ $('#language-toggle').textContent=ar?'EN':'العربية';$('#language-toggle').setAttribute('aria-label',tr('Switch to English','التحويل إلى العربية'));
+ $('#footer-lang').textContent=ar?'English':'العربية';
+ $('.brand').setAttribute('aria-label',tr('أديم العمران — الرئيسية','Adim Alumran — Home'));
+ $('#main-nav').setAttribute('aria-label',tr('القائمة الرئيسية','Main navigation'));
+ $('#menu-toggle').setAttribute('aria-label',tr('فتح القائمة','Open menu'));
+ $('#filters').setAttribute('aria-label',tr('تصنيف الصور','Filter images'));
+ $('#close-dialog').setAttribute('aria-label',tr('إغلاق','Close'));
+ $('#to-top').setAttribute('aria-label',tr('إلى الأعلى','Back to top'));
+ buildTicker();renderServices();renderPrinciples();renderFilters();renderGrid();
+ if($('#image-dialog').open)renderDialog();
+}
+function toggleLanguage(){closeMenu();state.language=state.language==='ar'?'en':'ar';try{localStorage.setItem('adim-language',state.language);}catch{}translatePage();}
+
+/* ---------- interactions ---------- */
+function closeMenu(){$('#main-nav').classList.remove('is-open');$('#menu-toggle').setAttribute('aria-expanded','false');}
+$('#language-toggle').addEventListener('click',toggleLanguage);
+$('#footer-lang').addEventListener('click',()=>{toggleLanguage();scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});});
 $('#menu-toggle').addEventListener('click',()=>{const open=$('#menu-toggle').getAttribute('aria-expanded')!=='true';$('#menu-toggle').setAttribute('aria-expanded',String(open));$('#main-nav').classList.toggle('is-open',open);});
-$('#main-nav').addEventListener('click',event=>{if(event.target.closest('a'))closeMenu();});
-document.addEventListener('keydown',event=>{if(event.key==='Escape')closeMenu();if(!$('#image-dialog').open)return;if(event.key==='ArrowRight'){event.preventDefault();navigatePhoto(1);}if(event.key==='ArrowLeft'){event.preventDefault();navigatePhoto(-1);}});
-$('#collections').addEventListener('click',event=>{const button=event.target.closest('[data-collection]');if(button)chooseFilter(button.dataset.collection,true);});
-$('#filters').addEventListener('click',event=>{const button=event.target.closest('[data-filter]');if(button)chooseFilter(button.dataset.filter);});
-$('#archive-search').addEventListener('input',event=>{state.search=event.target.value;state.limit=12;renderArchive();});
-$('#reset-filters').addEventListener('click',()=>chooseFilter('all'));
-$('#load-more').addEventListener('click',()=>{state.limit+=12;renderArchive();});
-$('#archive-grid').addEventListener('click',event=>{const button=event.target.closest('[data-photo]');if(button)openPhoto(Number(button.dataset.photo));});
+$('#main-nav').addEventListener('click',e=>{if(e.target.closest('a'))closeMenu();});
+$('#services-list').addEventListener('click',e=>{
+ const head=e.target.closest('[data-service]');
+ if(head){const i=Number(head.dataset.service);state.openService=state.openService===i?-1:i;document.querySelectorAll('.acc-item').forEach((item,k)=>{item.classList.toggle('is-open',k===state.openService);item.querySelector('.acc-head').setAttribute('aria-expanded',String(k===state.openService));});return;}
+ const link=e.target.closest('[data-show]');if(link){chooseFilter(link.dataset.show);}
+});
+$('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b)chooseFilter(b.dataset.filter);});
+$('#load-more').addEventListener('click',()=>{state.limit+=12;renderGrid();});
+$('#project-grid').addEventListener('click',e=>{const b=e.target.closest('[data-photo]');if(b)openPhoto(Number(b.dataset.photo));});
 $('#close-dialog').addEventListener('click',()=>$('#image-dialog').close());
 $('#image-dialog').addEventListener('close',()=>{document.body.classList.remove('modal-open');state.lastFocus?.focus();});
-$('#image-dialog').addEventListener('click',event=>{if(event.target===$('#image-dialog')){const rect=event.target.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)$('#image-dialog').close();}});
-$('#previous-image').addEventListener('click',()=>navigatePhoto(-1));$('#next-image').addEventListener('click',()=>navigatePhoto(1));
-$('#dialog-thumbnails').addEventListener('click',event=>{const button=event.target.closest('[data-dialog-index]');if(button){state.dialogIndex=Number(button.dataset.dialogIndex);renderDialog();}});
-document.querySelectorAll('.approach-rows details').forEach(detail=>detail.addEventListener('toggle',()=>{if(detail.open){document.querySelectorAll('.approach-rows details').forEach(other=>{if(other!==detail)other.open=false;});const image=$('#principle-image');if(image&&detail.dataset.detailPhoto){image.src=asset(detail.dataset.detailPhoto);image.alt=tr('صورة مرجعية من الأرشيف','Reference image from the supplied archive');}}}));
-try{const saved=localStorage.getItem('adim-language');if(saved==='ar'||saved==='en')state.language=saved;}catch{}
-$('#year').textContent=String(new Date().getFullYear());translatePage();
+$('#image-dialog').addEventListener('click',e=>{if(e.target===$('#image-dialog'))$('#image-dialog').close();});
+$('#previous-image').addEventListener('click',()=>stepPhoto(-1));$('#next-image').addEventListener('click',()=>stepPhoto(1));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();if(!$('#image-dialog').open)return;if(e.key==='ArrowRight')stepPhoto(1);if(e.key==='ArrowLeft')stepPhoto(-1);});
 
-
-const motionButton=$('#motion-toggle');
-let motionPaused=false;
-function updateMotionLabel(){
- const label=$('#motion-label');if(!label)return;
- const ar=document.body.classList.contains('motion-paused')?'تشغيل الحركة':'إيقاف الحركة';
- const en=document.body.classList.contains('motion-paused')?'Play motion':'Pause motion';
- label.dataset.ar=ar;label.dataset.en=en;label.textContent=tr(ar,en);
+/* header + back-to-top + active link */
+const bar=$('#to-top-bar'),circ=2*Math.PI*23;
+let ticking=false;
+function onScroll(){
+ const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;
+ $('#site-header').classList.toggle('is-solid',y>40);
+ $('#to-top').classList.toggle('is-visible',y>innerHeight*.6);
+ bar.style.strokeDashoffset=String(circ*(1-(h>0?Math.min(1,y/h):0)));
+ let current='home';['about','services','projects','contact'].forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<innerHeight*.4)current=id;});
+ document.querySelectorAll('.main-nav a').forEach(a=>a.classList.toggle('is-active',a.getAttribute('href')===`#${current}`));
+ ticking=false;
 }
-motionButton.addEventListener('click',()=>{
- motionPaused=!motionPaused;document.body.classList.toggle('motion-paused',motionPaused);
- motionButton.setAttribute('aria-pressed',String(motionPaused));$('#motion-icon').textContent=motionPaused?'▷':'Ⅱ';updateMotionLabel();
-});
-const reduceMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
-if('IntersectionObserver' in window&&!reduceMotion.matches){
+addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(onScroll);}},{passive:true});
+let resizeTimer;addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(layoutRing,120);});
+
+/* reveal */
+let revealObserver=null;
+function observeReveals(){if(!revealObserver)return;document.querySelectorAll('[data-reveal]:not(.is-visible)').forEach(n=>revealObserver.observe(n));}
+if('IntersectionObserver' in window&&!reduceMotion){
  document.documentElement.classList.add('motion-ready');
- const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');revealObserver.unobserve(entry.target);}}),{threshold:.08});
- document.querySelectorAll('[data-reveal]').forEach(node=>revealObserver.observe(node));
+ revealObserver=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('is-visible');revealObserver.unobserve(en.target);}}),{threshold:.12});
+ new IntersectionObserver(es=>{heroVisible=es[0].isIntersecting;}).observe($('#home'));
 }
-let scrollFrame=false;
-function paintProgress(){const height=document.documentElement.scrollHeight-innerHeight;$('.scroll-progress').style.transform=`scaleX(${height>0?Math.min(1,scrollY/height):0})`;scrollFrame=false;}
-addEventListener('scroll',()=>{if(!scrollFrame){scrollFrame=true;requestAnimationFrame(paintProgress);}},{passive:true});paintProgress();
+
+/* init */
+try{const saved=localStorage.getItem('adim-language');if(saved==='ar'||saved==='en')state.language=saved;}catch{}
+$('#year').textContent=String(new Date().getFullYear());
+buildRing();buildMarquee();translatePage();observeReveals();onScroll();
+requestAnimationFrame(spin);
